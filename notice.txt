@@ -1,1 +1,18 @@
+注意：
+1. 采用Mysql8.0  恶心！！！
+2. 采用SpringBoot1.3以上版本需要手动注入SqlSessionFactoryBean   -- 例如demo中的DataSourceConfig
+
 记录实现的功能：
+1. 单元测试
+2. @RequestParam 接收参数
+3. @RestController @ResponseBody 区别
+4. 自定义Filter  编写自定义Filter(实现Filter),重写init、dofilter、destory方法，把自定义Filter注册到容器中@Bean、FilterRegistrationBean
+5. 读取自定义配置文件
+        方法一:通过@PropertySource("classpath:xxx.properties")+@Value
+        方法二:通过封装进一个实体中 例如：ParameterConfig
+6. 集成log4j2   控制台，文件(每一个小时一个)，邮件(异步发送)，不同级别输出到不同的文件中
+7. 处理全局异常@ControllerAdvice @ExceptionHandler    这个全局异常，只捕获Controller层产生的异常 和 其他层产生的异常没有被处理而一直抛到了Controller层且没有在Controller捕获处理的异常
+8. Mysql8.0注意点
+        驱动由com.mysql.jdbc.Driver改为com.mysql.cj.jdbc.Driver
+        要求必须要加时区serverTimezone=UTC   必须设置useSSL=false 例如：url: jdbc:mysql://127.0.0.1:3306/base_on_springboot_demo?serverTimezone=UTC&characterEncoding=utf8&useUnicode
+9. AOP 注解切面

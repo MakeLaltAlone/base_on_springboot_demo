@@ -1,0 +1,15 @@
+CREATE DATABASE base_on_springboot_demo;
+
+CREATE TABLE user(
+  id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) default '' NOT NULL COMMENT '姓名',
+  age int(11) NOT NULL DEFAULT '0' COMMENT '年龄',
+  password VARCHAR(255) default '' NOT NULL COMMENT '密码',
+  phone VARCHAR(255) default '' NOT NULL COMMENT '手机号',
+  remark varchar(200) NOT NULL DEFAULT '' COMMENT '备注',
+  operator_id varchar(10) NOT NULL DEFAULT '' COMMENT '操作人id',
+  operator_name varchar(30) NOT NULL DEFAULT '' COMMENT '操作人姓名',
+  delete_flag int(1) DEFAULT '0' COMMENT '当前状态，@0:正常@1:删除',
+  create_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  update_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) ENGINE=INNODB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
