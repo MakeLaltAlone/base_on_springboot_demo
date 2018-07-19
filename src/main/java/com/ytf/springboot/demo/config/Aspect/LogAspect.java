@@ -82,7 +82,10 @@ public class LogAspect {
     public Object arround(ProceedingJoinPoint pjp) {
         System.out.println("【注解：Around . 环绕前】方法环绕start.....");
         try {
+            //pjp.proceed()的返回结果就是对应切点方法的返回结果
             Object o =  pjp.proceed();//如果不执行这句，会不执行切面的Before方法及controller的业务方法
+
+            //可以通过 instanceof 判断是否是哪个实体，然后进行强转
             System.out.println("【注解：Around. 环绕后】方法环绕proceed，结果是 :" + o);
             return o;
         } catch (Throwable e) {
