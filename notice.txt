@@ -15,4 +15,7 @@
 8. Mysql8.0注意点
         驱动由com.mysql.jdbc.Driver改为com.mysql.cj.jdbc.Driver
         要求必须要加时区serverTimezone=UTC   必须设置useSSL=false 例如：url: jdbc:mysql://127.0.0.1:3306/base_on_springboot_demo?serverTimezone=UTC&characterEncoding=utf8&useUnicode
-9. AOP 注解切面
+9. AOP 注解切面   @Aspect  @Component  @Pointcut    可以通过注解或表达式两种方式切入
+10. 捕获子线程异常 实现UncaughtExceptionHandler类重写uncaughtException方法，子线程入口处增加Thread.setDefaultUncaughtExceptionHandler(new MyCrashHandler());   //MyCrashHandler为重写的类
+11. SpringBoot默认识别的mybatis的xml文件是在resource下的mapper文件夹下
+12. 集成Redis 利用Jedis需要设置Redis的密码  利用了函数式接口（抽取从JedisPoll中获取连接的代码）  （使用RedisTemplate实现操作Redis数据库的代码在项目中已注释掉）

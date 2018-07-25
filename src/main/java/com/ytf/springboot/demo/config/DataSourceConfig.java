@@ -67,7 +67,7 @@ public class DataSourceConfig {
         final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(partnerSettlementDataSource);
         sessionFactory.setMapperLocations(
-                ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources("classpath:com/ytf/springboot/demo/dao/*.xml"));
+                ResourcePatternUtils.getResourcePatternResolver(resourceLoader).getResources("classpath:mapper/*.xml"));
         return sessionFactory.getObject();
     }
 }

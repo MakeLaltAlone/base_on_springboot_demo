@@ -1,6 +1,8 @@
 package com.ytf.springboot.demo.controller;
 
 import com.ytf.springboot.demo.Exception.MyException;
+import com.ytf.springboot.demo.Utils.RedisUtil;
+import com.ytf.springboot.demo.config.BaseBean.MyCrashHandler;
 import com.ytf.springboot.demo.config.ParameterConfig;
 import com.ytf.springboot.demo.model.JsonBody;
 import com.ytf.springboot.demo.model.User;
@@ -38,6 +40,9 @@ public class HelloWordController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ResponseBody
     @RequestMapping("/sayHello")
@@ -135,5 +140,52 @@ public class HelloWordController {
         }
         LOGGER.info("HelloWordController.divided result:{}",div);
         return div;
+    }
+
+    @RequestMapping(value = "/testUncaughtExceptionHandler",method = RequestMethod.GET)
+    @ResponseBody     //该注解表示该方法以Json格式返回
+    public JsonBody testUncaughtExceptionHandler(){
+        LOGGER.info("HelloWordController.testUncaughtExceptionHandler start...");
+        try {
+            //开启一个线程
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //子线程中产生异常
+                    LOGGER.info("HelloWordController.testUncaughtExceptionHandler 子线程start...");
+                    //为当前线程设未捕获异常处理器
+                    Thread.setDefaultUncaughtExceptionHandler(new MyCrashHandler());
+                    int a = 10/0;
+                }
+            }).start();
+
+            LOGGER.info("HelloWordController.testUncaughtExceptionHandler 主线程执行代码...");
+        } catch (Exception e) {
+            LOGGER.error("HelloWordController.testUncaughtExceptionHandler 主线程捕获异常 error",e);
+            return JsonBody.fail(e.getMessage());
+        }
+        LOGGER.info("HelloWordController.testUncaughtExceptionHandler end...");
+        return JsonBody.success("success");
+    }
+
+    /**
+     * 设置key value
+     * @param key
+     * @param value
+     * @return
+     */
+    @RequestMapping(value = "/testRedis/{key}/{value}/{expire}",method = RequestMethod.GET)
+    @ResponseBody
+    public JsonBody testRedis(@PathVariable("key")String key,@PathVariable("value")String value,@PathVariable("expire")Integer expire){
+        LOGGER.info("HelloWordController.testRedis start...");
+
+        try {
+            boolean b = redisUtil.setByKey(key, value, expire);
+            LOGGER.info("HelloWordController.testRedis end...");
+            return JsonBody.success(b);
+        } catch (Exception e) {
+            LOGGER.error("HelloWordController.testRedis error",e);
+            return JsonBody.fail(e.getMessage());
+        }
     }
 }

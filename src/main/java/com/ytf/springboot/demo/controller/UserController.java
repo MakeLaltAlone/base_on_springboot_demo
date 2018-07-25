@@ -17,6 +17,14 @@ import java.util.Map;
 @Controller
 public class UserController {
 
+    /**
+     * 功能描述: 自定义注解方式标识该方法是一个切点
+     *
+     * @param: [params]
+     * @return: java.lang.String
+     * @auther: yangtengfei
+     * @date: 2018/7/20 9:46
+     */
     @RequestMapping(value = "/testAopLog",method = RequestMethod.POST)
     @ResponseBody
     @LogAopAnnotation   //通过自定义注解的方式标识该方法是AOP的一个切点
@@ -27,7 +35,6 @@ public class UserController {
         String age = (String) params.get("age");
         System.out.println("**********name***********:"+name);
         System.out.println("**********age***********:"+age);
-
 
         return "testAopLog 正常结束";
     }
@@ -41,7 +48,6 @@ public class UserController {
         String age = (String) params.get("age");
         System.out.println("**********name***********:"+name);
         System.out.println("**********age***********:"+age);
-
 
         return "testAopLog 正常结束";
     }
