@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -185,6 +187,42 @@ public class HelloWordController {
             return JsonBody.success(b);
         } catch (Exception e) {
             LOGGER.error("HelloWordController.testRedis error",e);
+            return JsonBody.fail(e.getMessage());
+        }
+    }
+
+    /**
+     * 把List放入Redis
+     * @return
+     */
+    @RequestMapping(value = "/testPutListRedis",method = RequestMethod.GET)
+    @ResponseBody
+    public JsonBody testPutListRedis(){
+        LOGGER.info("HelloWordController.testPutListRedis start...");
+
+        try {
+            List<User> list = new ArrayList<>();
+            List<User> users = userService.queryUserAll();
+            Long size = redisUtil.lPushAll("users", users, 100);
+            LOGGER.info("HelloWordController.testPutListRedis end...");
+            return JsonBody.success(size);
+        } catch (Exception e) {
+            LOGGER.error("HelloWordController.testPutListRedis error",e);
+            return JsonBody.fail(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/testGetListRedis",method = RequestMethod.GET)
+    @ResponseBody
+    public JsonBody testGetListRedis(){
+        LOGGER.info("HelloWordController.testGetListRedis start...");
+
+        try {
+            List<User> users = (List<User>) redisUtil.lRange("users", 0, -1);
+            LOGGER.info("HelloWordController.testGetListRedis end...");
+            return JsonBody.success(users);
+        } catch (Exception e) {
+            LOGGER.error("HelloWordController.testGetListRedis error",e);
             return JsonBody.fail(e.getMessage());
         }
     }

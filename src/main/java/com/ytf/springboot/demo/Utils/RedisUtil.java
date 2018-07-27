@@ -5,10 +5,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.serializer.SerializationUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.function.Function;
 
 /*
@@ -66,8 +73,26 @@ public class RedisUtil {
         Function<Jedis, Object> function = (Jedis jedis) -> {
             return jedis.expire(key,time);
         };
-        boolean result = (boolean)excute(function);
-        return result;
+        Long result = (Long) excute(function);
+
+        if(result!=null&&result.equals(1)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean expire(byte[] key, int time){
+        Function<Jedis, Object> function = (Jedis jedis) -> {
+            return jedis.expire(key,time);
+        };
+        Long result = (Long) excute(function);
+
+        if(result!=null&&result.equals(1)){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -208,6 +233,156 @@ public class RedisUtil {
         }
     }
 
+    //==================================List================================
+
+    /**
+     * 放入list
+     * @param key
+     * @param value
+     * @param expire
+     * @return
+     */
+    public Long lPushAll(String key, List value, Integer expire) {
+        if (StringUtils.isBlank(key) || value ==null || !(value.size()>0)) {
+            LOGGER.error("empty key or value, key {}, value {}", key, value);
+            return null;
+        }
+
+        Function<Jedis, Object> function = (Jedis jedis) -> {
+            final byte[] rawKey = rawKey(key);
+            final byte[][] rawValues = rawValues(value);
+            return jedis.lpush(rawKey,rawValues);
+        };
+        Object excute = excute(function);
+        if(expire!=null&&expire>0){
+            expire(rawKey(key),expire);
+        }
+        return (Long) excute;
+
+    }
+
+    /**
+     * 取出List
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    public List lRange(String key,long start, long end) {
+        if (StringUtils.isBlank(key)) {
+            LOGGER.error("empty key or value, key {}, value {}");
+            return null;
+        }
+
+        Function<Jedis, Object> function = (Jedis jedis) -> {
+            final byte[] rawKey = rawKey(key);
+            List<byte[]> bytes = jedis.lrange(rawKey, start, end);
+            return deserializeValues(bytes);
+        };
+        Object excute = excute(function);
+
+        return (List) excute;
+
+    }
+
+    //=========================================序列化/反序列化  （实体要实现Ser）=========================================================
+
+    byte[] rawKey(Object key) {
+        Assert.notNull(key, "non null key required");
+        if (key instanceof byte[]) {
+            return (byte[]) key;
+        }
+        return serialize(key);
+    }
+
+    byte[][] rawValues(Collection<Object> values) {
+
+        Assert.notEmpty(values, "Values must not be 'null' or empty.");
+        Assert.noNullElements(values.toArray(), "Values must not contain 'null' value.");
+
+        byte[][] rawValues = new byte[values.size()][];
+        int i = 0;
+        for (Object value : values) {
+            rawValues[i++] = rawValue(value);
+        }
+
+        return rawValues;
+    }
+
+    byte[] rawValue(Object value) {
+        if (value instanceof byte[]) {
+            return (byte[]) value;
+        }
+        return serialize(value);
+    }
+
+    List<Object> deserializeValues(List<byte[]> rawValues) {
+        // connection in pipeline/multi mode
+        if (rawValues == null) {
+            return null;
+        }
+
+        List<Object> values = new ArrayList<Object>(rawValues.size());
+
+        for (byte[] bs : rawValues) {
+            values.add(unserizlize(bs));
+        }
+
+        return values;
+    }
+
+    private static byte[] serialize(Object object) {
+        ObjectOutputStream objectOutputStream = null;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(object);
+            byte[] getByte = byteArrayOutputStream.toByteArray();
+            return getByte;
+        } catch (Exception e) {
+            LOGGER.error("序列化异常",e);
+        } finally {
+            try {
+                if (objectOutputStream != null){
+                    objectOutputStream.close();
+                }
+                if(byteArrayOutputStream != null){
+                    byteArrayOutputStream.close();
+                }
+            } catch (IOException e) {
+                LOGGER.error("序列化异常",e);
+            }
+
+        }
+        return null;
+    }
+
+    private static Object unserizlize(byte[] binaryByte) {
+        ObjectInputStream objectInputStream = null;
+        ByteArrayInputStream byteArrayInputStream = null;
+        byteArrayInputStream = new ByteArrayInputStream(binaryByte);
+        try {
+            objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            Object obj = objectInputStream.readObject();
+            return obj;
+        } catch (Exception e) {
+            LOGGER.error("序列化异常",e);
+        } finally {
+            try {
+                if (objectInputStream != null){
+                    objectInputStream.close();
+                }
+                if(byteArrayInputStream != null){
+                    byteArrayInputStream.close();
+                }
+            } catch (IOException e) {
+                LOGGER.error("序列化异常",e);
+            }
+
+        }
+        return null;
+    }
 }
 
 

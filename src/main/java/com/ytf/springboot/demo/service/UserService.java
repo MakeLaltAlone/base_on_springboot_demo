@@ -5,6 +5,8 @@ import com.ytf.springboot.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author:TengFeiYang
  * @Description:
@@ -22,6 +24,15 @@ public class UserService {
      */
     public void addUser(User user) throws Exception{
         userMapper.insertSelective(user);
+    }
+
+    /**
+     * 查询所有
+     * @return
+     * @throws Exception
+     */
+    public List<User> queryUserAll() throws Exception{
+        return userMapper.queryAll();
     }
 
 }

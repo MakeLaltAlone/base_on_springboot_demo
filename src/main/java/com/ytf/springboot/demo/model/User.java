@@ -1,8 +1,12 @@
 package com.ytf.springboot.demo.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class User {
+public class User implements Serializable {
     private Integer id;
 
     private String name;
@@ -24,6 +28,9 @@ public class User {
     private Date createTime;
 
     private Date updateTime;
+
+    public User() {
+    }
 
     public Integer getId() {
         return id;
@@ -111,5 +118,10 @@ public class User {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
     }
 }
