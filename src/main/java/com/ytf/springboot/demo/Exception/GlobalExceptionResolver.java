@@ -23,7 +23,7 @@ import java.util.Map;
  * 在之前的项目中，如果我们没有进行任何配置，那么容器会自动打印错误的信息，如果tomcat的404页面，400页面等等
  * @Date:Created in 2018/7/6
  */
-@ControllerAdvice
+@ControllerAdvice    //控制器增强，使@ExceptionHandler、@InitBinder、@ModelAttribute注解的方法应用到所有的@RequestMapping注解的方法
 public class GlobalExceptionResolver {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionResolver.class);
@@ -36,7 +36,7 @@ public class GlobalExceptionResolver {
         return JsonBody.fail(myException.getExceDescr());
     }
 
-    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(value = Exception.class)    //异常处理器，此注解的作用是当出现其定义的异常时进行处理的方法
     public ModelAndView exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception e) {
         LOGGER.info("全局异常拦截器--非自定义异常");
 
@@ -52,4 +52,20 @@ public class GlobalExceptionResolver {
         mav.setView(view);
         return mav;
     }
+
+
+//    @ExceptionHandler(value = Exception.class)
+//    public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
+//
+//        ModelAndView mav = new ModelAndView();
+//
+//        mav.addObject("exception", e);
+//
+//        mav.addObject("url", req.getRequestURL());
+//
+//        mav.setViewName(DEFAULT_ERROR_VIEW);
+//
+//        return mav;
+//
+//    }
 }

@@ -19,3 +19,7 @@
 10. 捕获子线程异常 实现UncaughtExceptionHandler类重写uncaughtException方法，子线程入口处增加Thread.setDefaultUncaughtExceptionHandler(new MyCrashHandler());   //MyCrashHandler为重写的类
 11. SpringBoot默认识别的mybatis的xml文件是在resource下的mapper文件夹下
 12. 集成Redis 利用Jedis需要设置Redis的密码  利用了函数式接口（抽取从JedisPoll中获取连接的代码）  （使用RedisTemplate实现操作Redis数据库的代码在项目中已注释掉）
+13. 数据校验 采用Hibernate-validator进行统一参数校验
+        -- 通过@Valid和BindingResult中获取
+        -- 手动从实体中获取
+        -- 自定义校验注解

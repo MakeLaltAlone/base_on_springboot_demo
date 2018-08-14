@@ -1,18 +1,24 @@
 package com.ytf.springboot.demo.model;
 
+import com.ytf.springboot.demo.annotation.Constant;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 public class User implements Serializable {
     private Integer id;
 
+    @NotBlank(message = "姓名不能为空")
     private String name;
 
+    @NotNull(message = "年龄不能为空")
     private Integer age;
 
+    @Constant(message = "密码必须为123456",value = "123456")
     private String password;
 
     private String phone;

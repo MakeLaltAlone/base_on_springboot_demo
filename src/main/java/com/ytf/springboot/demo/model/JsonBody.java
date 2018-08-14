@@ -60,6 +60,12 @@ public class JsonBody {
 		return body;
 	}
 
+	public static JsonBody success(){
+		JsonBody body = new JsonBody();
+		body.setStatus(0);
+		return body;
+	}
+
 	public static JsonBody fail(String retMsg){
 		JsonBody body = new JsonBody(retMsg);
 		body.setStatus(-1);
