@@ -38,3 +38,7 @@ pagehelper:
     reasonable: true
     supportMethodsArguments: true
     params: count=countSql
+
+#使用redis做缓存-固定的key
+redis_key:
+  user_all: user_all

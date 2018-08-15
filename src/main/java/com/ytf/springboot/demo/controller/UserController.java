@@ -1,9 +1,15 @@
 package com.ytf.springboot.demo.controller;
 
+import com.ytf.springboot.demo.Utils.RedisUtil;
 import com.ytf.springboot.demo.Utils.ValidationUtil;
 import com.ytf.springboot.demo.annotation.LogAopAnnotation;
 import com.ytf.springboot.demo.model.JsonBody;
 import com.ytf.springboot.demo.model.User;
+import com.ytf.springboot.demo.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @Author:TengFeiYang
@@ -22,6 +30,11 @@ import java.util.Map;
  */
 @Controller
 public class UserController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
+    @Autowired
+    private UserService userService;
 
     /**
      * 功能描述: 自定义注解方式标识该方法是一个切点
@@ -91,6 +104,30 @@ public class UserController {
         }
 
         return JsonBody.success();
+    }
+
+    @RequestMapping(value = "/testRedisCache",method = RequestMethod.GET)
+    @ResponseBody
+    public JsonBody testRedisCache() {
+        try {
+            List<User> users = userService.queryUserAll();
+            return JsonBody.success(users);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(),e);
+            return JsonBody.fail(e.getMessage());
+        }
+
+    }
+
+    @RequestMapping(value = "/testSession")
+    @ResponseBody
+    public String uid(HttpSession session){
+        UUID uid = (UUID) session.getAttribute("uid");
+        if (uid == null) {
+            uid = UUID.randomUUID();
+        }
+        session.setAttribute("uid", uid);
+        return session.getId();
     }
 
 }
