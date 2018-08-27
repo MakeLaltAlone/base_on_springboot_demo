@@ -3,8 +3,10 @@ package com.ytf.springboot.demo.controller;
 import com.ytf.springboot.demo.Utils.RedisUtil;
 import com.ytf.springboot.demo.Utils.ValidationUtil;
 import com.ytf.springboot.demo.annotation.LogAopAnnotation;
+import com.ytf.springboot.demo.annotation.ParamCheck;
 import com.ytf.springboot.demo.model.JsonBody;
 import com.ytf.springboot.demo.model.User;
+import com.ytf.springboot.demo.rabbitmq.Producer;
 import com.ytf.springboot.demo.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Producer producer;
 
     /**
      * 功能描述: 自定义注解方式标识该方法是一个切点
@@ -106,6 +111,21 @@ public class UserController {
         return JsonBody.success();
     }
 
+    /**
+     * 校验实体参数-利用AOP
+     * @param user
+     * @return
+     */
+    @ParamCheck
+    @RequestMapping(value = "/testValidator2",method = RequestMethod.POST)
+    @ResponseBody
+    public JsonBody testValidator2(@RequestBody User user){
+
+        System.out.println("校验");
+
+        return JsonBody.success();
+    }
+
     @RequestMapping(value = "/testRedisCache",method = RequestMethod.GET)
     @ResponseBody
     public JsonBody testRedisCache() {
@@ -128,6 +148,16 @@ public class UserController {
         }
         session.setAttribute("uid", uid);
         return session.getId();
+    }
+
+    @RequestMapping(value = "/testRabbitMQ")
+    @ResponseBody
+    public String testRabbitMQ(){
+        for (int i=1;i<=100;++i){
+            producer.sendMessage("YTF",i);
+        }
+
+        return "success";
     }
 
 }

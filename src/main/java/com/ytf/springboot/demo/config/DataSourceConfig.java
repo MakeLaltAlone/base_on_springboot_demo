@@ -22,13 +22,13 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = { "com.ytf.springboot.demo.dao" }, sqlSessionFactoryRef = "SpringDemoSqlSessionFactory")
 public class DataSourceConfig {
 
-    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.master.url}")
     private String dbUrl;
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.master.username}")
     private String dbUser;
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.master.password}")
     private String dbPassword;
-    @Value("${spring.datasource.driver-class-name}")
+    @Value("${spring.datasource.master.driver-class-name}")
     private String driverName;
 
     @Autowired

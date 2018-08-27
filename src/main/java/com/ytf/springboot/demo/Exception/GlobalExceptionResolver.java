@@ -12,6 +12,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,10 +37,17 @@ public class GlobalExceptionResolver {
         return JsonBody.fail(myException.getExceDescr());
     }
 
+    @ExceptionHandler(value = UndeclaredThrowableException.class)
+    @ResponseBody
+    public JsonBody checkParamException(UndeclaredThrowableException throwable){
+        LOGGER.info("全局异常拦截器--自定义异常");
+        //这里可写逻辑
+        return JsonBody.fail(throwable.getUndeclaredThrowable().getMessage());
+    }
+
     @ExceptionHandler(value = Exception.class)    //异常处理器，此注解的作用是当出现其定义的异常时进行处理的方法
     public ModelAndView exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception e) {
         LOGGER.info("全局异常拦截器--非自定义异常");
-
         //当然也可以直接返回ModelAndView等类型，然后跳转相应的错误页面，这都根据实际的需要进行使用
         MappingJackson2JsonView view = new MappingJackson2JsonView();
         Map<String,String> map = new HashMap<>();
