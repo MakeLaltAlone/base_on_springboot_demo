@@ -2,6 +2,7 @@ package com.ytf.springboot.demo.controller;
 
 import com.ytf.springboot.demo.Exception.MyException;
 import com.ytf.springboot.demo.Utils.RedisUtil;
+import com.ytf.springboot.demo.annotation.TimeWatch;
 import com.ytf.springboot.demo.config.BaseBean.MyCrashHandler;
 import com.ytf.springboot.demo.config.ParameterConfig;
 import com.ytf.springboot.demo.model.JsonBody;
@@ -223,6 +224,21 @@ public class HelloWordController {
             return JsonBody.success(users);
         } catch (Exception e) {
             LOGGER.error("HelloWordController.testGetListRedis error",e);
+            return JsonBody.fail(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/testTimeWatch",method = RequestMethod.GET)
+    @ResponseBody
+    @TimeWatch
+    public JsonBody testTimeWatch(){
+        LOGGER.info("HelloWordController.testTimeWatch start...");
+
+        try {
+            Thread.sleep(10000);
+            return JsonBody.success("success");
+        } catch (Exception e) {
+            LOGGER.error("HelloWordController.testTimeWatch error",e);
             return JsonBody.fail(e.getMessage());
         }
     }
