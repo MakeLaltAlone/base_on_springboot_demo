@@ -14,8 +14,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.1.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>2.0.5.RELEASE</version>
+		<!--<version>1.4.1.RELEASE</version>-->
 	</parent>
 
 	<properties>
@@ -96,10 +96,11 @@
 			<optional>true</optional>
 		</dependency>
 
-		<dependency><!--Spring Data Redis提供了四种Redis服务的Java客户端包的集成，分别是 Jedis ,JRedis , SRP and Lettuce-->
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-		</dependency>
+		<!--Spring Data Redis提供了四种Redis服务的Java客户端包的集成，分别是 Jedis ,JRedis , SRP and Lettuce-->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.data</groupId>-->
+			<!--<artifactId>spring-data-redis</artifactId>-->
+		<!--</dependency>-->
 <!--log4j2-开始-->
         <!-- log4j2-->
         <dependency>
@@ -143,10 +144,36 @@
 <!--数据库连接-结束-->
 
 		<!--整合 Redis-->
+
+		<!--这个依赖时spring-boot-starter-parent采取1.4.1的时候用-->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-redis</artifactId>-->
+		<!--</dependency>-->
+
+		<!--这个依赖时spring-boot-starter-parent采取2.5.0的时候用-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-redis</artifactId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-pool2</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<!--这个依赖时spring-boot-starter-parent采取2.5.0的时候用-->
+
+		<!--整合 Redis 结束-->
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -162,8 +189,8 @@
 
 		<!--集成RabbitMQ-->
 		<dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-starter-amqp</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 
 
@@ -171,6 +198,7 @@
 
 	<build>
 		<plugins>
+			<!--这个插件可以把SpringBoot项目打包成一个可执行的jar包-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
